@@ -1,4 +1,5 @@
-import { useCallback, useRef, useSyncExternalStore } from 'react'
+import { useCallback, useRef } from 'react'
+import { useSyncExternalStore } from 'use-sync-external-store'
 
 /**
  * Like `useSyncExternalStore`, but for subscribing to multiple keys.

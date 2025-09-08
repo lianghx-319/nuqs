@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   useAdapter,
   useAdapterDefaultOptions,
   useAdapterProcessUrlSearchParams
 } from './adapters/lib/context'
 import type { Nullable, Options, UrlKeys } from './defs'
-import { debug } from './lib/debug'
 import { error } from './lib/errors'
 import { debounceController } from './lib/queues/debounce'
 import { defaultRateLimit } from './lib/queues/rate-limiting'
@@ -71,7 +70,6 @@ export function useQueryStates<KeyMap extends UseQueryStatesKeysMap>(
   keyMap: KeyMap,
   options: Partial<UseQueryStatesOptions<KeyMap>> = {}
 ): UseQueryStatesReturn<KeyMap> {
-  const hookId = useId()
   const defaultOptions = useAdapterDefaultOptions()
   const processUrlSearchParams = useAdapterProcessUrlSearchParams()
 
@@ -118,13 +116,6 @@ export function useQueryStates<KeyMap extends UseQueryStatesKeysMap>(
   })
 
   const stateRef = useRef(internalState)
-  debug(
-    '[nuq+ %s `%s`] render - state: %O, iSP: %s',
-    hookId,
-    stateKeys,
-    internalState,
-    initialSearchParams
-  )
 
   // Initialise the refs with the initial values
   if (
@@ -140,13 +131,6 @@ export function useQueryStates<KeyMap extends UseQueryStatesKeysMap>(
       stateRef.current
     )
     if (hasChanged) {
-      debug('[nuq+ %s `%s`] State changed: %O', hookId, stateKeys, {
-        state,
-        initialSearchParams,
-        queuedQueries,
-        queryRef: queryRef.current,
-        stateRef: stateRef.current
-      })
       stateRef.current = state
       setInternalState(state)
     }
@@ -168,13 +152,6 @@ export function useQueryStates<KeyMap extends UseQueryStatesKeysMap>(
       stateRef.current
     )
     if (hasChanged) {
-      debug('[nuq+ %s `%s`] State changed: %O', hookId, stateKeys, {
-        state,
-        initialSearchParams,
-        queuedQueries,
-        queryRef: queryRef.current,
-        stateRef: stateRef.current
-      })
       stateRef.current = state
       setInternalState(state)
     }
@@ -188,7 +165,6 @@ export function useQueryStates<KeyMap extends UseQueryStatesKeysMap>(
   // Sync all hooks together & with external URL changes
   useEffect(() => {
     function updateInternalState(state: V) {
-      debug('[nuq+ %s `%s`] updateInternalState %O', hookId, stateKeys, state)
       stateRef.current = state
       setInternalState(state)
     }
@@ -207,15 +183,7 @@ export function useQueryStates<KeyMap extends UseQueryStatesKeysMap>(
             [stateKey as keyof KeyMap]: state ?? defaultValue ?? null
           }
           queryRef.current[urlKey] = query
-          debug(
-            '[nuq+ %s `%s`] Cross-hook key sync %s: %O (default: %O). Resolved: %O',
-            hookId,
-            stateKeys,
-            urlKey,
-            state,
-            defaultValue,
-            stateRef.current
-          )
+
           updateInternalState(stateRef.current)
         }
         return handlers
@@ -225,23 +193,13 @@ export function useQueryStates<KeyMap extends UseQueryStatesKeysMap>(
 
     for (const stateKey of Object.keys(keyMap)) {
       const urlKey = resolvedUrlKeys[stateKey]!
-      debug(
-        '[nuq+ %s `%s`] Subscribing to sync for `%s`',
-        hookId,
-        urlKey,
-        stateKeys
-      )
+
       emitter.on(urlKey, handlers[stateKey]!)
     }
     return () => {
       for (const stateKey of Object.keys(keyMap)) {
         const urlKey = resolvedUrlKeys[stateKey]!
-        debug(
-          '[nuq+ %s `%s`] Unsubscribing to sync for `%s`',
-          hookId,
-          urlKey,
-          stateKeys
-        )
+
         emitter.off(urlKey, handlers[stateKey])
       }
     }
@@ -258,7 +216,6 @@ export function useQueryStates<KeyMap extends UseQueryStatesKeysMap>(
               applyDefaultValues(stateRef.current, defaultValues)
             ) ?? nullMap)
           : (stateUpdater ?? nullMap)
-      debug('[nuq+ %s `%s`] setState: %O', hookId, stateKeys, newState)
       let returnedPromise: Promise<URLSearchParams> | undefined = undefined
       let maxDebounceTime = 0
       const debounceAborts: Array<
