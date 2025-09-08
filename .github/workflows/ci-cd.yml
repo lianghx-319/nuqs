@@ -55,9 +55,9 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - name: Install dependencies
-        run: pnpm install --ignore-scripts --frozen-lockfile --filter nuqs...
+        run: pnpm install --ignore-scripts --frozen-lockfile --filter @hanxx/nuqs...
       - name: Build package
-        run: pnpm build --filter nuqs
+        run: pnpm build --filter @hanxx/nuqs
       - name: Run publint on package.json
         run: pnpm publint packages/nuqs
       - uses: 47ng/actions-slack-notify@main
@@ -80,9 +80,9 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - name: Install dependencies
-        run: pnpm install --ignore-scripts --frozen-lockfile --filter nuqs...
+        run: pnpm install --ignore-scripts --frozen-lockfile --filter @hanxx/nuqs...
       - name: Run tests
-        run: pnpm run test ${{ github.event_name == 'workflow_dispatch' && '--force' || '' }} --filter nuqs
+        run: pnpm run test ${{ github.event_name == 'workflow_dispatch' && '--force' || '' }} --filter @hanxx/nuqs
         env:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
@@ -391,9 +391,9 @@ jobs:
       # Note: we do not use an external Turbo cache for publishing
       # to prevent against possible cache collision attacks.
       - name: Install dependencies
-        run: pnpm install --ignore-scripts --frozen-lockfile --filter nuqs...
+        run: pnpm install --ignore-scripts --frozen-lockfile --filter @hanxx/nuqs...
       - name: Build package
-        run: pnpm build --filter nuqs
+        run: pnpm build --filter @hanxx/nuqs
       - name: Semantic Release
         run: ../../node_modules/.bin/semantic-release
         working-directory: packages/nuqs
