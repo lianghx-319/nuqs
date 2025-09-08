@@ -400,8 +400,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Invalidate ISR cache for NPM in the docs
-        # todo: Remove nuqs.47ng.com when the switch has been made
-        run: |
-          curl -s "https://nuqs.47ng.com/api/isr?tag=npm&token=${{ secrets.ISR_TOKEN }}"
-          curl -s "https://nuqs.dev/api/isr?tag=npm&token=${{ secrets.ISR_TOKEN }}"
