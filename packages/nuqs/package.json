@@ -1,5 +1,5 @@
 {
-  "name": "nuqs",
+  "name": "@hanxx/nuqs",
   "version": "0.0.0-semantically-released",
   "description": "Type-safe search params state manager for React - Like useState, but stored in the URL query string",
   "license": "MIT",
