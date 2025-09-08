@@ -11,7 +11,7 @@
   "funding": "https://github.com/sponsors/franky47",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/47ng/nuqs.git",
+    "url": "git+https://github.com/lianghx-319/nuqs.git",
     "directory": "packages/nuqs"
   },
   "homepage": "https://nuqs.dev",
